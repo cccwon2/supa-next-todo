@@ -1,5 +1,4 @@
 // pages/api-docs.tsx
-import React from "react";
 import dynamic from "next/dynamic";
 
 // 서버 사이드 렌더링을 비활성화하고 동적으로 SwaggerUI를 로드합니다.
