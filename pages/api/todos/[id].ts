@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { PrismaClient } from "@prisma/client";
-
+import { createClient } from "@/utils/supabase/client";
+import { SUPABASE_TODO } from "@/constants/supabase";
 /**
  * @swagger
  * /api/todos/{id}:
@@ -77,40 +77,60 @@ import { PrismaClient } from "@prisma/client";
  *       200:
  *         description: "성공"
  */
-
-const prisma = new PrismaClient();
-
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
+  const supabase = createClient();
   const { id } = req.query;
   const todoId = Number(id);
 
   if (req.method === "GET") {
-    const todo = await prisma.todo.findUnique({
-      where: { id: todoId },
-    });
-    res.status(200).json(todo);
+    const { data: todo, error } = await supabase
+      .from(SUPABASE_TODO)
+      .select("*")
+      .eq("id", todoId)
+      .single();
+
+    if (error) {
+      res.status(400).json({ error: error.message });
+    } else {
+      res.status(200).json(todo);
+    }
   } else if (req.method === "PUT") {
     const { title, description, completed } = req.body;
-    const updatedTodo = await prisma.todo.update({
-      where: { id: todoId },
-      data: { title, description, completed },
-    });
-    res.status(200).json(updatedTodo);
+    const { data: updatedTodo, error } = await supabase
+      .from("todos")
+      .update({ title, description, completed })
+      .eq("id", todoId)
+      .single();
+
+    if (error) {
+      res.status(400).json({ error: error.message });
+    } else {
+      res.status(200).json(updatedTodo);
+    }
   } else if (req.method === "PATCH") {
     const data = req.body;
-    const updatedTodo = await prisma.todo.update({
-      where: { id: todoId },
-      data,
-    });
-    res.status(200).json(updatedTodo);
+    const { data: updatedTodo, error } = await supabase
+      .from("todos")
+      .update(data)
+      .eq("id", todoId)
+      .single();
+
+    if (error) {
+      res.status(400).json({ error: error.message });
+    } else {
+      res.status(200).json(updatedTodo);
+    }
   } else if (req.method === "DELETE") {
-    await prisma.todo.delete({
-      where: { id: todoId },
-    });
-    res.status(200).json({ message: "Todo deleted" });
+    const { error } = await supabase.from("todos").delete().eq("id", todoId);
+
+    if (error) {
+      res.status(400).json({ error: error.message });
+    } else {
+      res.status(200).json({ message: "Todo deleted" });
+    }
   } else {
     res.status(405).json({ message: "Method not allowed" });
   }

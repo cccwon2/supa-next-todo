@@ -1,24 +1,50 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/router";
 import { Todo } from "../../types";
-import { getTodo, deleteTodo } from "../../api/axios-todos";
+import { createClient } from "@/utils/supabase/client";
 import Link from "next/link";
+import { SUPABASE_TODO } from "@/constants/supabase";
 
 const TodoDetail: React.FC = () => {
   const router = useRouter();
   const { id } = router.query;
   const [todo, setTodo] = useState<Todo | null>(null);
+  // useMemo로 supabase 생성
+  const supabase = useMemo(() => createClient(), []);
 
   useEffect(() => {
     if (id) {
-      getTodo(Number(id)).then(setTodo);
-    }
-  }, [id]);
+      const getTodo = async (todoId: number) => {
+        const { data, error } = await supabase
+          .from(SUPABASE_TODO)
+          .select("*")
+          .eq("id", todoId)
+          .single();
 
+        if (error) {
+          console.error("Error fetching todo:", error);
+        } else {
+          setTodo(data);
+        }
+      };
+
+      getTodo(Number(id));
+    }
+  }, [id, supabase]);
+
+  // Supabase를 사용하여 특정 Todo 아이템 삭제하기
   const handleDelete = async () => {
     if (id) {
-      await deleteTodo(Number(id));
-      router.push("/");
+      const { error } = await supabase
+        .from(SUPABASE_TODO)
+        .delete()
+        .eq("id", Number(id));
+
+      if (error) {
+        console.error("Error deleting todo:", error);
+      } else {
+        router.push("/");
+      }
     }
   };
 

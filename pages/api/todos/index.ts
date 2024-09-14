@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { PrismaClient } from "@prisma/client";
+import { createClient } from "@/utils/supabase/client";
+import { SUPABASE_TODO } from "@/constants/supabase";
 
 /**
  * @swagger
@@ -61,21 +62,40 @@ import { PrismaClient } from "@prisma/client";
  *               $ref: '#/components/schemas/Todo'
  */
 
-const prisma = new PrismaClient();
+const supabase = createClient();
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
   if (req.method === "GET") {
-    const todos = await prisma.todo.findMany();
-    res.status(200).json(todos);
+    const { data: todos, error } = await supabase
+      .from(SUPABASE_TODO)
+      .select("*");
+
+    if (error) {
+      res.status(500).json({ message: "Error fetching todos", error });
+    } else {
+      res.status(200).json(todos);
+    }
   } else if (req.method === "POST") {
-    const { title, description } = req.body;
-    const todo = await prisma.todo.create({
-      data: { title, description },
-    });
-    res.status(200).json(todo);
+    const { title, description } = req.body; // POST 요청에서 body에서 데이터를 가져옴
+
+    if (!title || !description) {
+      return res
+        .status(400)
+        .json({ message: "Title and description are required." });
+    }
+
+    const { data, error } = await supabase
+      .from("Todo")
+      .insert([{ title, description }]);
+
+    if (error) {
+      return res.status(500).json({ message: "Error creating todo", error });
+    }
+
+    return res.status(200).json(data);
   } else {
     res.status(405).json({ message: "Method not allowed" });
   }
