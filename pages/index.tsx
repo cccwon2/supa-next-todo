@@ -9,7 +9,7 @@ const TodoList: React.FC = () => {
 
   useEffect(() => {
     getTodos().then(setTodos);
-  }, []);
+  }, [setTodos]);
 
   return (
     <div>

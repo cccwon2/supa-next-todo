@@ -1,25 +1,32 @@
+# Redirect rules
 [[redirects]]
-from = "/_next/image"
-to = "/.netlify/images?url=:url&w=:width&q=:quality"
-status = 200
+  from = "/_next/image"
+  to = "/.netlify/images?url=:url&w=:width&q=:quality"
+  status = 200
 
+  # Query parameters for the first redirect
   [redirects.query]
-  url = ":url"
-  w = ":width"
-  q = ":quality"
+    url = ":url"
+    w = ":width"
+    q = ":quality"
 
 [[redirects]]
-from = "/_ipx/*"
-to = "/.netlify/images?url=:url&w=:width&q=:quality"
-status = 200
+  from = "/_ipx/*"
+  to = "/.netlify/images?url=:url&w=:width&q=:quality"
+  status = 200
 
+  # Query parameters for the second redirect
   [redirects.query]
-  url = ":url"
-  w = ":width"
-  q = ":quality"
+    url = ":url"
+    w = ":width"
+    q = ":quality"
 
-[context]
+# Build configuration
+[build]
+  command   = "npm run build"
+  publish   = ".next"
+  functions = ".netlify/functions"
 
-  [context.production]
-
-  [context.dev]
+# Plugins configuration
+[[plugins]]
+  package = "@netlify/plugin-nextjs"

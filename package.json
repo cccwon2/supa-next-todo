@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@netlify/plugin-nextjs": "^5.7.1",
     "@prisma/client": "^5.19.1",
     "@types/styled-components": "^5.1.34",
     "axios": "^1.7.7",
