@@ -105,8 +105,16 @@ import { SUPABASE_TODO } from "../../../types/supabase";
  */
 
 export async function GET(request: Request) {
-  const id = request.url.split("/").pop();
+  const idString = request.url.split("/").pop();
+  const id = idString ? parseInt(idString, 10) : null;
   const supabase = createClient();
+
+  if (!id) {
+    return new Response(
+      JSON.stringify({ error: "ID가 제공되지 않았습니다." }),
+      { status: 400 }
+    );
+  }
 
   const { data: todo, error } = await supabase
     .from(SUPABASE_TODO)
@@ -126,12 +134,20 @@ export async function GET(request: Request) {
 }
 
 export async function PUT(request: Request) {
-  const id = request.url.split("/").pop();
+  const idString = request.url.split("/").pop();
+  const id = idString ? parseInt(idString, 10) : null;
   const supabase = createClient();
   const { task, is_complete } = await request.json();
 
   if (!task) {
     return NextResponse.json({ error: "Task is required." }, { status: 400 });
+  }
+
+  if (!id) {
+    return new Response(
+      JSON.stringify({ error: "ID가 제공되지 않았습니다." }),
+      { status: 400 }
+    );
   }
 
   const { data, error } = await supabase
@@ -148,8 +164,16 @@ export async function PUT(request: Request) {
 }
 
 export async function DELETE(request: Request) {
-  const id = request.url.split("/").pop();
+  const idString = request.url.split("/").pop();
+  const id = idString ? parseInt(idString, 10) : null;
   const supabase = createClient();
+
+  if (!id) {
+    return new Response(
+      JSON.stringify({ error: "ID가 제공되지 않았습니다." }),
+      { status: 400 }
+    );
+  }
 
   const { data, error } = await supabase
     .from(SUPABASE_TODO)

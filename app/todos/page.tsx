@@ -12,7 +12,6 @@ const TodoList: React.FC = () => {
   const router = useRouter();
   const [user] = useAtom(userAtom);
   const [todos, setTodos] = useAtom(todoListAtom);
-  const supabase = createClient();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -21,7 +20,7 @@ const TodoList: React.FC = () => {
     } else {
       const fetchTodos = async () => {
         setLoading(true);
-        const { data, error } = await supabase
+        const { data, error } = await createClient
           .from(SUPABASE_TODO)
           .select("*")
           .eq("user_id", user.id)
@@ -37,7 +36,7 @@ const TodoList: React.FC = () => {
 
       fetchTodos();
     }
-  }, [user, router, supabase, setTodos]);
+  }, [user, router, setTodos]);
 
   return (
     <div className="container mx-auto px-4 py-8">

@@ -11,7 +11,6 @@ const TodoCreate: React.FC = () => {
   const [task, setTask] = useState("");
   const [isComplete, setIsComplete] = useState(false);
   const router = useRouter();
-  const supabase = createClient();
   const [user] = useAtom(userAtom);
 
   const createTodo = async ({
@@ -27,7 +26,7 @@ const TodoCreate: React.FC = () => {
       return;
     }
 
-    const { data, error } = await supabase.from(SUPABASE_TODO).insert([
+    const { data, error } = await createClient.from(SUPABASE_TODO).insert([
       {
         user_id: user.id,
         task,

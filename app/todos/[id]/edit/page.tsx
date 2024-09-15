@@ -12,7 +12,6 @@ const EditTodo: React.FC = () => {
   const [todo, setTodo] = useAtom(todoAtom);
   const [task, setTask] = useState("");
   const [isComplete, setIsComplete] = useState(false);
-  const supabase = createClient();
 
   useEffect(() => {
     if (todo) {
@@ -21,7 +20,7 @@ const EditTodo: React.FC = () => {
     } else {
       const fetchTodo = async () => {
         const id = window.location.pathname.split("/").pop();
-        const { data, error } = await supabase
+        const { data, error } = await createClient
           .from(SUPABASE_TODO)
           .select("*")
           .eq("id", Number(id))
@@ -38,13 +37,13 @@ const EditTodo: React.FC = () => {
 
       fetchTodo();
     }
-  }, [todo, setTodo, supabase]);
+  }, [todo, setTodo]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!todo) return;
 
-    const { error } = await supabase
+    const { error } = await createClient
       .from(SUPABASE_TODO)
       .update({ task, is_complete: isComplete })
       .eq("id", todo.id);

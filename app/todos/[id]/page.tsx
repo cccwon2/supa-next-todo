@@ -13,12 +13,11 @@ const TodoDetail: React.FC = () => {
   const params = useParams();
   const id = params.id;
   const [todo, setTodo] = useAtom(todoAtom);
-  const supabase = createClient();
 
   useEffect(() => {
     if (id) {
       const getTodo = async (todoId: number) => {
-        const { data, error } = await supabase
+        const { data, error } = await createClient
           .from(SUPABASE_TODO)
           .select("*")
           .eq("id", todoId)
@@ -33,11 +32,11 @@ const TodoDetail: React.FC = () => {
 
       getTodo(Number(id));
     }
-  }, [id, supabase, setTodo]);
+  }, [id, setTodo]);
 
   const handleDelete = async () => {
     if (id) {
-      const { error } = await supabase
+      const { error } = await createClient
         .from(SUPABASE_TODO)
         .delete()
         .eq("id", Number(id));

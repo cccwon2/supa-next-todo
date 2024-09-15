@@ -79,7 +79,7 @@ export async function GET() {
 
 export async function POST(request: Request) {
   const supabase = createClient();
-  const { task, is_complete } = await request.json();
+  const { task, is_complete, user_id } = await request.json();
 
   if (!task) {
     return NextResponse.json({ error: "Task is required." }, { status: 400 });
@@ -87,7 +87,7 @@ export async function POST(request: Request) {
 
   const { data, error } = await supabase
     .from(SUPABASE_TODO)
-    .insert([{ task, is_complete }])
+    .insert([{ task, is_complete, user_id }])
     .select();
 
   if (error) {
