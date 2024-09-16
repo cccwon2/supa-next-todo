@@ -6,6 +6,22 @@ export default function Profile() {
   const session = useSession();
   const router = useRouter();
 
+  const formatExpiresAt = (expiresAt: number) => {
+    const date = new Date(expiresAt * 1000);
+    return date
+      .toLocaleString("ko-KR", {
+        timeZone: "Asia/Seoul",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+      })
+      .replace(/\. /g, "-")
+      .replace(".", "");
+  };
+
   useEffect(() => {
     if (!session) {
       router.push("/login");
@@ -26,10 +42,21 @@ export default function Profile() {
             <p className="font-semibold">{session.user.email}</p>
           </div>
           <div className="border-b pb-2">
-            <p className="text-gray-600">사용자 ID</p>
-            <p className="font-semibold">{session.user.id}</p>
+            <p className="text-gray-600">사용자 Role</p>
+            <p className="font-semibold">{session.user.role}</p>
           </div>
-          {/* 필요한 경우 추가 프로필 정보를 여기에 넣으세요 */}
+          <div className="border-b pb-2">
+            <p className="text-gray-600">인증 수단</p>
+            <p className="font-semibold">
+              {session.user.app_metadata.provider}
+            </p>
+          </div>
+          <div className="border-b pb-2">
+            <p className="text-gray-600">토큰 만료 시간</p>
+            <p className="font-semibold">
+              {formatExpiresAt(session.expires_at ?? 0)}
+            </p>
+          </div>
         </div>
       </div>
     </div>

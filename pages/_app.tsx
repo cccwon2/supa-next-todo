@@ -9,7 +9,7 @@ export default function App({ Component, pageProps }: AppProps) {
   const [supabaseClient] = useState(() =>
     createPagesBrowserClient({
       cookieOptions: {
-        name: "sb-session",
+        name: "sb:token",
         sameSite: "lax",
         secure: process.env.NODE_ENV === "production",
         domain: process.env.NEXT_PUBLIC_DOMAIN || undefined,
