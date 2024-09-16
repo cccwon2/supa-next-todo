@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation"; // App Router에서는 useRouter 대신 next/navigation에서 가져옴
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import Link from "next/link";
 
 export default function Login() {
   const supabase = useSupabaseClient();
@@ -60,9 +61,9 @@ export default function Login() {
         {/* 회원가입 링크 */}
         <p className="mt-4">
           아직 계정이 없으신가요?{" "}
-          <a href="/signup" className="text-blue-500 hover:underline">
+          <Link href="/signup" className="text-blue-500 hover:underline">
             회원가입
-          </a>
+          </Link>
         </p>
       </div>
     </div>
