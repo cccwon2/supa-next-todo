@@ -1,6 +1,8 @@
 import { type EmailOtpType } from "@supabase/supabase-js";
-import { NextResponse, type NextRequest } from "next/server";
-import { createClient } from "../../../utils/supabase/server";
+import { type NextRequest } from "next/server";
+
+import { createClient } from "@/utils/supabase/server";
+import { redirect } from "next/navigation";
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -16,11 +18,11 @@ export async function GET(request: NextRequest) {
       token_hash,
     });
     if (!error) {
-      // 사용자를 지정된 리다이렉트 URL 또는 앱의 루트로 리다이렉트
-      return NextResponse.redirect(new URL(next, request.url));
+      // redirect user to specified redirect URL or root of app
+      redirect(next);
     }
   }
 
-  // 사용자를 오류 페이지로 리다이렉트
-  return NextResponse.redirect(new URL("/error", request.url));
+  // redirect the user to an error page with some instructions
+  redirect("/error");
 }
