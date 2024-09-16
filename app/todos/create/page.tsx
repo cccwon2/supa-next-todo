@@ -26,7 +26,8 @@ const TodoCreate: React.FC = () => {
       return;
     }
 
-    const { data, error } = await createClient.from(SUPABASE_TODO).insert([
+    const supabase = createClient();
+    const { data, error } = await supabase.from(SUPABASE_TODO).insert([
       {
         user_id: user.id,
         task,

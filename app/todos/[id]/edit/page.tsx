@@ -20,7 +20,8 @@ const EditTodo: React.FC = () => {
     } else {
       const fetchTodo = async () => {
         const id = window.location.pathname.split("/").pop();
-        const { data, error } = await createClient
+        const supabase = createClient();
+        const { data, error } = await supabase
           .from(SUPABASE_TODO)
           .select("*")
           .eq("id", Number(id))
@@ -43,7 +44,8 @@ const EditTodo: React.FC = () => {
     e.preventDefault();
     if (!todo) return;
 
-    const { error } = await createClient
+    const supabase = createClient();
+    const { error } = await supabase
       .from(SUPABASE_TODO)
       .update({ task, is_complete: isComplete })
       .eq("id", todo.id);

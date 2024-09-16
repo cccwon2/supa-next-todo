@@ -1,42 +1,53 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useAtom } from "jotai";
-import { userAtom, todoListAtom } from "@/atoms";
+import { todoListAtom } from "@/atoms";
 import { createClient } from "@/utils/supabase/client";
-import { SUPABASE_TODO } from "@/app/types/supabase";
 import Link from "next/link";
 
 const TodoList: React.FC = () => {
   const router = useRouter();
-  const [user] = useAtom(userAtom);
   const [todos, setTodos] = useAtom(todoListAtom);
   const [loading, setLoading] = useState(true);
 
+  const fetchTodos = useCallback(
+    async (userId: string) => {
+      const supabase = createClient();
+      const { data, error } = await supabase
+        .from("todos")
+        .select("*")
+        .eq("user_id", userId);
+
+      if (error) {
+        console.error("Todo 목록을 가져오는 중 오류 발생:", error);
+      } else {
+        setTodos(data || []);
+      }
+      setLoading(false);
+    },
+    [setTodos]
+  );
+
   useEffect(() => {
-    if (!user) {
-      router.push("/login");
-    } else {
-      const fetchTodos = async () => {
-        setLoading(true);
-        const { data, error } = await createClient
-          .from(SUPABASE_TODO)
-          .select("*")
-          .eq("user_id", user.id)
-          .order("inserted_at", { ascending: false });
+    const supabase = createClient();
 
-        if (error) {
-          console.error("Todo 목록 가져오기 오류:", error);
-        } else {
-          setTodos(data || []);
-        }
+    const checkUserSession = async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      if (session) {
+        fetchTodos(session.user.id);
+      } else {
         setLoading(false);
-      };
+        router.push("/login");
+      }
+    };
 
-      fetchTodos();
-    }
-  }, [user, router, setTodos]);
+    checkUserSession();
+  }, [fetchTodos, router]);
 
   return (
     <div className="container mx-auto px-4 py-8">

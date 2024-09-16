@@ -17,7 +17,8 @@ const TodoDetail: React.FC = () => {
   useEffect(() => {
     if (id) {
       const getTodo = async (todoId: number) => {
-        const { data, error } = await createClient
+        const supabase = createClient();
+        const { data, error } = await supabase
           .from(SUPABASE_TODO)
           .select("*")
           .eq("id", todoId)
@@ -36,7 +37,8 @@ const TodoDetail: React.FC = () => {
 
   const handleDelete = async () => {
     if (id) {
-      const { error } = await createClient
+      const supabase = createClient();
+      const { error } = await supabase
         .from(SUPABASE_TODO)
         .delete()
         .eq("id", Number(id));

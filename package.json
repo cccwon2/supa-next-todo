@@ -20,6 +20,7 @@
     "@supabase/auth-ui-shared": "^0.1.8",
     "@supabase/ssr": "^0.5.1",
     "@supabase/supabase-js": "^2.39.8",
+    "cookies-next": "^4.2.1",
     "jotai": "^2.9.3",
     "next": "^14.2.11",
     "next-auth": "^4.24.7",

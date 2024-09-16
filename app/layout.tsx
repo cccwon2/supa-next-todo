@@ -32,9 +32,11 @@ export default function RootLayout({
   useEffect(() => {
     const checkSession = async () => {
       try {
+        const supabase = createClient();
         const {
           data: { session },
-        } = await createClient.auth.getSession();
+        } = await supabase.auth.getSession();
+        console.log(session);
         if (!session) {
           router.push("/login");
         }
