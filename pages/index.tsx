@@ -1,11 +1,14 @@
-import Head from 'next/head'
-import { useSession, useSupabaseClient } from '@supabase/auth-helpers-react'
-import { Auth, ThemeSupa } from '@supabase/auth-ui-react'
-import TodoList from '@/components/TodoList'
+import Head from "next/head";
+import { useSession, useSupabaseClient } from "@supabase/auth-helpers-react";
+import { Auth, ThemeSupa } from "@supabase/auth-ui-react";
+import TodoList from "@/components/TodoList";
+import Link from "next/link";
 
 export default function Home() {
-  const session = useSession()
-  const supabase = useSupabaseClient()
+  const session = useSession();
+  const supabase = useSupabaseClient();
+
+  console.log("세션 상태:", session); // 세션 상태 로깅
 
   return (
     <>
@@ -23,28 +26,35 @@ export default function Home() {
                 <span className="font-sans text-4xl text-center pb-2 mb-1 border-b mx-4 align-center">
                   Login
                 </span>
-                <Auth supabaseClient={supabase} appearance={{ theme: ThemeSupa }} theme="dark" />
+                <Auth
+                  supabaseClient={supabase}
+                  appearance={{ theme: ThemeSupa }}
+                  theme="dark"
+                />
               </div>
             </div>
           </div>
         ) : (
           <div
             className="w-full h-full flex flex-col justify-center items-center p-4"
-            style={{ minWidth: 250, maxWidth: 600, margin: 'auto' }}
+            style={{ minWidth: 250, maxWidth: 600, margin: "auto" }}
           >
             <TodoList session={session} />
+            <Link href="/profile" className="btn-black w-full mt-4">
+              프로필 보기
+            </Link>
             <button
-              className="btn-black w-full mt-12"
+              className="btn-black w-full mt-4"
               onClick={async () => {
-                const { error } = await supabase.auth.signOut()
-                if (error) console.log('Error logging out:', error.message)
+                const { error } = await supabase.auth.signOut();
+                if (error) console.log("Error logging out:", error.message);
               }}
             >
-              Logout
+              로그아웃
             </button>
           </div>
         )}
       </div>
     </>
-  )
+  );
 }
