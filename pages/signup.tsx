@@ -64,6 +64,34 @@ const SignupPage = () => {
     }
   };
 
+  const signInWithGoogle = async () => {
+    setIsLoading(true);
+    setErrorMessage(null);
+    try {
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          queryParams: {
+            access_type: "offline",
+            prompt: "consent",
+          },
+          redirectTo: redirectUrl,
+        },
+      });
+      if (error) throw error;
+      // Google 로그인은 리다이렉션을 통해 이루어지므로,
+      // 여기서 추가적인 처리는 필요 없습니다.
+    } catch (error) {
+      if (error instanceof AuthError) {
+        setErrorMessage("구글 로그인에 실패했습니다: " + error.message);
+      } else {
+        setErrorMessage("알 수 없는 오류가 발생했습니다.");
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center">
       <div className="max-w-md w-full bg-white p-8 rounded-lg shadow-md">
@@ -99,7 +127,7 @@ const SignupPage = () => {
               className="w-full p-2 mb-4 border rounded"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              onKeyPress={(e) => e.key === "Enter" && signUpNewUser()}
+              onKeyDown={(e) => e.key === "Enter" && signUpNewUser()}
               aria-label="비밀번호"
               required
             />
@@ -113,6 +141,14 @@ const SignupPage = () => {
             {isLoading ? "처리 중..." : "회원가입"}
           </button>
         </form>
+        <button
+          onClick={signInWithGoogle}
+          className="w-full mt-4 bg-white text-gray-700 border border-gray-300 py-2 rounded hover:bg-gray-100 disabled:opacity-50"
+          disabled={isLoading}
+          aria-label="구글로 회원가입"
+        >
+          {isLoading ? "처리 중..." : "구글로 회원가입"}
+        </button>
         {errorMessage && (
           <p className="text-red-500 mt-4" role="alert">
             {errorMessage}

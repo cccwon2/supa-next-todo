@@ -12,17 +12,7 @@ export default function Login() {
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const redirectUrl =
-    process.env.NEXT_PUBLIC_REDIRECT_URL ||
-    (typeof window !== "undefined"
-      ? `${window.location.origin}/auth/callback`
-      : "");
-
-  useEffect(() => {
-    if (process.env.NODE_ENV !== "production") {
-      console.log("Redirect URL being used:", redirectUrl);
-    }
-  }, [redirectUrl]);
+  const redirectUrl = `${window.location.origin}/auth/callback`;
 
   const validateForm = (): boolean => {
     if (!email) {
@@ -74,15 +64,17 @@ export default function Login() {
       });
 
       if (error) throw error;
-      if (data.url) {
-        window.location.href = data.url;
+
+      if (!data.url) {
+        throw new Error("로그인 URL을 받지 못했습니다.");
       }
+
+      window.location.href = data.url;
     } catch (error) {
-      if (error instanceof AuthError) {
-        setErrorMessage("구글 로그인에 실패했습니다: " + error.message);
-      } else {
-        setErrorMessage("알 수 없는 오류가 발생했습니다.");
-      }
+      console.error("Google 로그인 오류:", error);
+      setErrorMessage(
+        "Google 로그인 중 오류가 발생했습니다. 다시 시도해 주세요."
+      );
     } finally {
       setIsLoading(false);
     }
@@ -90,8 +82,12 @@ export default function Login() {
 
   useEffect(() => {
     const { data: authListener } = supabase.auth.onAuthStateChange(
-      (event, session) => {
+      async (event, session) => {
         if (event === "SIGNED_IN" && session) {
+          const {
+            data: { user },
+          } = await supabase.auth.getUser();
+          console.log("로그인된 사용자:", user);
           router.push("/");
         }
       }
@@ -138,7 +134,7 @@ export default function Login() {
               id="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              onKeyPress={(e) => e.key === "Enter" && signInWithEmail()}
+              onKeyDown={(e) => e.key === "Enter" && signInWithEmail()}
               className="w-full p-2 border rounded"
               aria-label="비밀번호"
               required
