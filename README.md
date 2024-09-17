@@ -7,7 +7,7 @@
   - [Supabase.js](https://supabase.com/docs/library/getting-started): 사용자 관리 및 실시간 데이터 동기화
 
 - **백엔드**:
-  - [supabase.com/dashboard](https://supabase.com/dashboard/): Supabase.js와 함께 사용되는 RESTful API가 제공되는 호스팅 Postgres 데이터베이스
+  - [supabase.com/dashboard](https://supabase.com/dashboard/): Supabase.js에서 사용되는 RESTful API가 제공되는 Postgres 데이터베이스
 
 ---
 
