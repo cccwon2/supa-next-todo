@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation"; // App Router에서는 useRouter 대신 next/navigation에서 가져옴
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import Link from "next/link";
@@ -34,6 +34,23 @@ export default function Login() {
       setErrorMessage("구글 로그인에 실패했습니다: " + error.message);
     }
   }
+
+  // 로그인 상태 변경 감지
+  useEffect(() => {
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        if (event === "SIGNED_IN" && session) {
+          router.push("/");
+        }
+      }
+    );
+
+    return () => {
+      if (authListener && authListener.subscription) {
+        authListener.subscription.unsubscribe();
+      }
+    };
+  }, [router, supabase.auth]);
 
   return (
     <div className="min-h-screen flex justify-center items-center">
