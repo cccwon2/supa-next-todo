@@ -48,6 +48,7 @@ export default function Home() {
               onClick={async () => {
                 const { error } = await supabase.auth.signOut();
                 if (error) console.log("Error logging out:", error.message);
+                router.push("/login");
               }}
             >
               로그아웃
