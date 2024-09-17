@@ -1,28 +1,22 @@
-import { useEffect } from "react";
-import { useRouter } from "next/router";
-import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import { NextApiRequest, NextApiResponse } from "next";
+import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 
-export default function AuthCallback() {
-  const router = useRouter();
-  const supabase = useSupabaseClient();
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
+  const { code } = req.query;
 
-  useEffect(() => {
-    const { code } = router.query;
-
-    if (code) {
-      supabase.auth
-        .exchangeCodeForSession(String(code))
-        .then(({ data, error }) => {
-          if (error) {
-            console.error("Error exchanging code for session:", error);
-            router.push("/login?error=AuthenticationFailed");
-          } else {
-            console.log("Successfully authenticated:", data);
-            router.push("/"); // 인증 성공 후 홈페이지로 리다이렉트
-          }
-        });
+  if (code) {
+    const supabase = createPagesServerClient({ req, res });
+    try {
+      await supabase.auth.exchangeCodeForSession(String(code));
+      return res.redirect("/");
+    } catch (error) {
+      console.error("Error exchanging code for session:", error);
+      return res.redirect("/login?error=AuthenticationFailed");
     }
-  }, [router, supabase]);
+  }
 
-  return <div>인증 처리 중...</div>; // 로딩 상태를 표시할 수 있습니다
+  return res.status(400).json({ error: "No code provided" });
 }

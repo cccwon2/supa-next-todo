@@ -60,33 +60,27 @@ const SignupPage = () => {
     }
   };
 
-  const signInWithGoogle = async () => {
+  async function signInWithGoogle() {
     setIsLoading(true);
-    setErrorMessage(null);
+    setErrorMessage("");
     try {
-      const { data, error } = await supabase.auth.signInWithOAuth({
+      const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          queryParams: {
-            access_type: "offline",
-            prompt: "consent",
-          },
           redirectTo: redirectUrl,
         },
       });
+
       if (error) throw error;
-      // Google 로그인은 리다이렉션을 통해 이루어지므로,
-      // 여기서 추가적인 처리는 필요 없습니다.
     } catch (error) {
-      if (error instanceof AuthError) {
-        setErrorMessage("구글 로그인에 실패했습니다: " + error.message);
-      } else {
-        setErrorMessage("알 수 없는 오류가 발생했습니다.");
-      }
+      console.error("Google 로그인 오류:", error);
+      setErrorMessage(
+        "Google 로그인 중 오류가 발생했습니다. 다시 시도해 주세요."
+      );
     } finally {
       setIsLoading(false);
     }
-  };
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center">

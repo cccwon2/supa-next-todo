@@ -56,7 +56,7 @@ export default function Login() {
     setIsLoading(true);
     setErrorMessage("");
     try {
-      const { data, error } = await supabase.auth.signInWithOAuth({
+      const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
           redirectTo: redirectUrl,
@@ -64,12 +64,6 @@ export default function Login() {
       });
 
       if (error) throw error;
-
-      if (!data.url) {
-        throw new Error("로그인 URL을 받지 못했습니다.");
-      }
-
-      router.push("/");
     } catch (error) {
       console.error("Google 로그인 오류:", error);
       setErrorMessage(
