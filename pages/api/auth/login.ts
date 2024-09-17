@@ -10,10 +10,7 @@ export default async function handler(
   }
 
   const { email, password, provider } = req.body;
-  const redirectUrl = `${
-    process.env.NEXT_PUBLIC_REDIRECT_URL ||
-    "https://supa-next-todolist.vercel.app/api/auth/callback"
-  }`;
+  const redirectUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/auth/v1/callback`;
 
   // Supabase 클라이언트 생성
   const supabase = createPagesServerClient({ req, res });

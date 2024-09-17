@@ -12,10 +12,17 @@ export default function Home() {
 
   // 세션 확인 후 로그인 페이지로 리다이렉트
   useEffect(() => {
-    if (!session) {
-      router.push("/login"); // 세션이 없으면 로그인 페이지로 이동
-    }
-  }, [session, router]);
+    const checkSession = async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      if (!session) {
+        router.push("/login");
+      }
+    };
+
+    checkSession();
+  }, [supabase.auth, router]);
 
   return (
     <>
