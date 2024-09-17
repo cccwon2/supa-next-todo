@@ -11,12 +11,10 @@ export default function Login() {
   const [errorMessage, setErrorMessage] = useState(""); // 에러 메시지 상태
 
   // 리다이렉트 URL을 환경에 따라 동적으로 설정
-  const redirectUrl = process.env.NEXT_PUBLIC_REDIRECT_URL;
-
-  console.log(
-    "NEXT_PUBLIC_REDIRECT_URL:",
-    process.env.NEXT_PUBLIC_REDIRECT_URL
-  );
+  const redirectUrl =
+    process.env.NEXT_PUBLIC_REDIRECT_URL ||
+    (typeof window !== "undefined" && window.location.origin) ||
+    "https://supa-next-todolist.vercel.app";
   console.log("Redirect URL being used:", redirectUrl);
 
   // 이메일 로그인
@@ -32,6 +30,13 @@ export default function Login() {
       router.push("/"); // 로그인 성공 시 메인 페이지로 이동
     }
   }
+
+  useEffect(() => {
+    console.log(
+      "Client-side NEXT_PUBLIC_REDIRECT_URL:",
+      process.env.NEXT_PUBLIC_REDIRECT_URL
+    );
+  }, []);
 
   // 구글 로그인
   async function signInWithGoogle() {
