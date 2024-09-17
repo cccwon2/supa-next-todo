@@ -11,8 +11,13 @@ export default function Login() {
   const [errorMessage, setErrorMessage] = useState(""); // 에러 메시지 상태
 
   // 리다이렉트 URL을 환경에 따라 동적으로 설정
-  const redirectUrl =
-    process.env.NEXT_PUBLIC_REDIRECT_URL || "http://localhost:3000";
+  const redirectUrl = process.env.NEXT_PUBLIC_REDIRECT_URL;
+
+  console.log(
+    "NEXT_PUBLIC_REDIRECT_URL:",
+    process.env.NEXT_PUBLIC_REDIRECT_URL
+  );
+  console.log("Redirect URL being used:", redirectUrl);
 
   // 이메일 로그인
   async function signInWithEmail() {
@@ -39,9 +44,8 @@ export default function Login() {
 
     if (error) {
       setErrorMessage("구글 로그인에 실패했습니다: " + error.message);
-    } else if (data.url) {
-      // 클라이언트 사이드 리다이렉션
-      window.location.href = data.url;
+    } else {
+      router.push("/"); // 로그인 성공 시 메인 페이지로 이동
     }
   }
 
