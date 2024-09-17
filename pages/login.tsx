@@ -10,7 +10,7 @@ export default function Login() {
   const [password, setPassword] = useState(""); // password 상태
   const [errorMessage, setErrorMessage] = useState(""); // 에러 메시지 상태
 
-  // 이메일 로그인 함수
+  // 이메일 로그인
   async function signInWithEmail() {
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
@@ -24,11 +24,21 @@ export default function Login() {
     }
   }
 
+  // 구글 로그인
+  async function signInWithGoogle() {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+    });
+
+    if (error) {
+      setErrorMessage("구글 로그인에 실패했습니다: " + error.message);
+    }
+  }
+
   return (
     <div className="min-h-screen flex justify-center items-center">
       <div className="max-w-md w-full bg-white p-6 rounded shadow-md">
         <h2 className="text-2xl font-bold mb-4">로그인</h2>
-
         {/* 이메일 입력 필드 */}
         <input
           type="email"
@@ -37,7 +47,6 @@ export default function Login() {
           onChange={(e) => setEmail(e.target.value)}
           className="w-full p-2 mb-4 border rounded"
         />
-
         {/* 비밀번호 입력 필드 */}
         <input
           type="password"
@@ -46,7 +55,6 @@ export default function Login() {
           onChange={(e) => setPassword(e.target.value)}
           className="w-full p-2 mb-4 border rounded"
         />
-
         {/* 로그인 버튼 */}
         <button
           onClick={signInWithEmail}
@@ -54,7 +62,13 @@ export default function Login() {
         >
           로그인
         </button>
-
+        {/* 구글 로그인 버튼 */}
+        <button
+          onClick={signInWithGoogle}
+          className="w-full bg-white text-gray-700 border border-gray-300 py-2 px-4 rounded hover:bg-gray-100 mt-4"
+        >
+          구글로 로그인
+        </button>
         {/* 에러 메시지 */}
         {errorMessage && <p className="mt-4 text-red-500">{errorMessage}</p>}
 
