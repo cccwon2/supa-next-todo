@@ -12,7 +12,7 @@ export default function Login() {
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const redirectUrl = `${window.location.origin}/auth/callback`;
+  const redirectUrl = process.env.NEXT_PUBLIC_REDIRECT_URL;
 
   const validateForm = (): boolean => {
     if (!email) {

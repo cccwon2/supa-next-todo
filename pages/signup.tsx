@@ -12,11 +12,7 @@ const SignupPage = () => {
   const supabase = createClientComponentClient();
   const router = useRouter();
 
-  const redirectUrl =
-    process.env.NEXT_PUBLIC_REDIRECT_URL ||
-    (typeof window !== "undefined"
-      ? `${window.location.origin}/auth/callback`
-      : "");
+  const redirectUrl = process.env.NEXT_PUBLIC_REDIRECT_URL;
 
   const validateForm = (): boolean => {
     if (!email) {

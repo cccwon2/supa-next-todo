@@ -13,11 +13,7 @@ export default function App({ Component, pageProps }: AppProps) {
         name: "sb:token",
         sameSite: "lax",
         secure: process.env.NODE_ENV === "production",
-        domain:
-          process.env.NEXT_PUBLIC_DOMAIN ||
-          (typeof window !== "undefined"
-            ? window.location.hostname
-            : undefined),
+        domain: process.env.NEXT_PUBLIC_DOMAIN,
         path: "/",
       },
     })
