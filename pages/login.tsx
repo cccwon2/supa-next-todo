@@ -10,6 +10,10 @@ export default function Login() {
   const [password, setPassword] = useState(""); // password 상태
   const [errorMessage, setErrorMessage] = useState(""); // 에러 메시지 상태
 
+  // 리다이렉트 URL을 환경에 따라 동적으로 설정
+  const redirectUrl =
+    process.env.NEXT_PUBLIC_REDIRECT_URL || "http://localhost:3000";
+
   // 이메일 로그인
   async function signInWithEmail() {
     const { data, error } = await supabase.auth.signInWithPassword({
@@ -26,12 +30,18 @@ export default function Login() {
 
   // 구글 로그인
   async function signInWithGoogle() {
-    const { error } = await supabase.auth.signInWithOAuth({
+    const { data, error } = await supabase.auth.signInWithOAuth({
       provider: "google",
+      options: {
+        redirectTo: redirectUrl,
+      },
     });
 
     if (error) {
       setErrorMessage("구글 로그인에 실패했습니다: " + error.message);
+    } else if (data.url) {
+      // 클라이언트 사이드 리다이렉션
+      window.location.href = data.url;
     }
   }
 
