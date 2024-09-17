@@ -1,35 +1,66 @@
-"use client";
-
-import { useState } from "react";
+import { useState, FormEvent } from "react";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { useRouter } from "next/router";
+import Link from "next/link";
+import { AuthError } from "@supabase/supabase-js";
 
 const SignupPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const supabase = createClientComponentClient();
+  const router = useRouter();
 
-  const getRedirectURL = () => {
-    return process.env.NEXT_PUBLIC_REDIRECT_URL || "http://localhost:3000/";
+  const redirectUrl =
+    process.env.NEXT_PUBLIC_REDIRECT_URL ||
+    (typeof window !== "undefined"
+      ? `${window.location.origin}/auth/callback`
+      : "");
+
+  const validateForm = (): boolean => {
+    if (!email) {
+      setErrorMessage("이메일을 입력해주세요.");
+      return false;
+    }
+    if (!password) {
+      setErrorMessage("비밀번호를 입력해주세요.");
+      return false;
+    }
+    if (password.length < 6) {
+      setErrorMessage("비밀번호는 최소 6자 이상이어야 합니다.");
+      return false;
+    }
+    return true;
   };
 
-  console.log("getRedirectURL: ", getRedirectURL);
+  const signUpNewUser = async (e?: FormEvent) => {
+    e?.preventDefault();
+    if (!validateForm()) return;
 
-  const signUpNewUser = async () => {
-    setError(null);
-    setSuccess(false);
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: getRedirectURL(),
-      },
-    });
-    if (error) {
-      setError(error.message);
-    } else {
-      setSuccess(true);
+    setIsLoading(true);
+    setErrorMessage(null);
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: redirectUrl,
+        },
+      });
+      if (error) throw error;
+
+      router.push(
+        "/login?message=회원가입이 완료되었습니다. 이메일을 확인해주세요."
+      );
+    } catch (error) {
+      if (error instanceof AuthError) {
+        setErrorMessage("회원가입에 실패했습니다: " + error.message);
+      } else {
+        setErrorMessage("알 수 없는 오류가 발생했습니다.");
+      }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -37,27 +68,62 @@ const SignupPage = () => {
     <div className="min-h-screen flex items-center justify-center">
       <div className="max-w-md w-full bg-white p-8 rounded-lg shadow-md">
         <h2 className="text-2xl font-bold mb-4">회원가입</h2>
-        {error && <p className="text-red-500 mb-4">{error}</p>}
-        <input
-          type="email"
-          placeholder="이메일"
-          className="w-full p-2 mb-4 border rounded"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <input
-          type="password"
-          placeholder="비밀번호"
-          className="w-full p-2 mb-4 border rounded"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <button
-          onClick={signUpNewUser}
-          className="w-full bg-blue-500 text-white py-2 rounded"
-        >
-          회원가입
-        </button>
+        <form onSubmit={signUpNewUser}>
+          <div className="mb-4">
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-gray-700"
+            >
+              이메일
+            </label>
+            <input
+              type="email"
+              id="email"
+              className="w-full p-2 mb-4 border rounded"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              aria-label="이메일 주소"
+              required
+            />
+          </div>
+          <div className="mb-4">
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium text-gray-700"
+            >
+              비밀번호
+            </label>
+            <input
+              type="password"
+              id="password"
+              className="w-full p-2 mb-4 border rounded"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              onKeyPress={(e) => e.key === "Enter" && signUpNewUser()}
+              aria-label="비밀번호"
+              required
+            />
+          </div>
+          <button
+            type="submit"
+            className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 disabled:opacity-50"
+            disabled={isLoading}
+            aria-label="회원가입"
+          >
+            {isLoading ? "처리 중..." : "회원가입"}
+          </button>
+        </form>
+        {errorMessage && (
+          <p className="text-red-500 mt-4" role="alert">
+            {errorMessage}
+          </p>
+        )}
+        <p className="mt-4">
+          이미 계정이 있으신가요?{" "}
+          <Link href="/login" className="text-blue-500 hover:underline">
+            로그인
+          </Link>
+        </p>
       </div>
     </div>
   );

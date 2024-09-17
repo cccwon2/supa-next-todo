@@ -1,65 +1,96 @@
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation"; // App Router에서는 useRouter 대신 next/navigation에서 가져옴
+import { useState, useEffect, FormEvent } from "react";
+import { useRouter } from "next/router";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import Link from "next/link";
+import { AuthError } from "@supabase/supabase-js";
 
 export default function Login() {
   const supabase = useSupabaseClient();
-  const router = useRouter(); // Router 사용
-  const [email, setEmail] = useState(""); // email 상태
-  const [password, setPassword] = useState(""); // password 상태
-  const [errorMessage, setErrorMessage] = useState(""); // 에러 메시지 상태
+  const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState<string>("");
+  const [isLoading, setIsLoading] = useState(false);
 
-  // 리다이렉트 URL을 환경에 따라 동적으로 설정
   const redirectUrl =
     process.env.NEXT_PUBLIC_REDIRECT_URL ||
-    (typeof window !== "undefined" && window.location.origin) ||
-    "https://supa-next-todolist.vercel.app";
-  console.log("Redirect URL being used:", redirectUrl);
-
-  // 이메일 로그인
-  async function signInWithEmail() {
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-
-    if (error) {
-      setErrorMessage("로그인에 실패했습니다: " + error.message);
-    } else {
-      router.push("/"); // 로그인 성공 시 메인 페이지로 이동
-    }
-  }
+    (typeof window !== "undefined"
+      ? `${window.location.origin}/auth/callback`
+      : "");
 
   useEffect(() => {
-    console.log(
-      "Client-side NEXT_PUBLIC_REDIRECT_URL:",
-      process.env.NEXT_PUBLIC_REDIRECT_URL
-    );
-  }, []);
+    if (process.env.NODE_ENV !== "production") {
+      console.log("Redirect URL being used:", redirectUrl);
+    }
+  }, [redirectUrl]);
 
-  // 구글 로그인
-  async function signInWithGoogle() {
-    const { data, error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: {
-        redirectTo: redirectUrl,
-      },
-    });
+  const validateForm = (): boolean => {
+    if (!email) {
+      setErrorMessage("이메일을 입력해주세요.");
+      return false;
+    }
+    if (!password) {
+      setErrorMessage("비밀번호를 입력해주세요.");
+      return false;
+    }
+    return true;
+  };
 
-    if (error) {
-      setErrorMessage("구글 로그인에 실패했습니다: " + error.message);
-    } else {
-      router.push("/"); // 로그인 성공 시 메인 페이지로 이동
+  async function signInWithEmail(e?: FormEvent) {
+    e?.preventDefault();
+    if (!validateForm()) return;
+
+    setIsLoading(true);
+    setErrorMessage("");
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) throw error;
+
+      router.push("/");
+    } catch (error) {
+      if (error instanceof AuthError) {
+        setErrorMessage("로그인에 실패했습니다: " + error.message);
+      } else {
+        setErrorMessage("알 수 없는 오류가 발생했습니다.");
+      }
+    } finally {
+      setIsLoading(false);
     }
   }
 
-  // 로그인 상태 변경 감지
+  async function signInWithGoogle() {
+    setIsLoading(true);
+    setErrorMessage("");
+    try {
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: redirectUrl,
+        },
+      });
+
+      if (error) throw error;
+      if (data.url) {
+        window.location.href = data.url;
+      }
+    } catch (error) {
+      if (error instanceof AuthError) {
+        setErrorMessage("구글 로그인에 실패했습니다: " + error.message);
+      } else {
+        setErrorMessage("알 수 없는 오류가 발생했습니다.");
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   useEffect(() => {
     const { data: authListener } = supabase.auth.onAuthStateChange(
       (event, session) => {
-        console.log("Auth event:", event);
-        console.log("Session:", session);
         if (event === "SIGNED_IN" && session) {
           router.push("/");
         }
@@ -77,40 +108,64 @@ export default function Login() {
     <div className="min-h-screen flex justify-center items-center">
       <div className="max-w-md w-full bg-white p-6 rounded shadow-md">
         <h2 className="text-2xl font-bold mb-4">로그인</h2>
-        {/* 이메일 입력 필드 */}
-        <input
-          type="email"
-          placeholder="이메일"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="w-full p-2 mb-4 border rounded"
-        />
-        {/* 비밀번호 입력 필드 */}
-        <input
-          type="password"
-          placeholder="비밀번호"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="w-full p-2 mb-4 border rounded"
-        />
-        {/* 로그인 버튼 */}
-        <button
-          onClick={signInWithEmail}
-          className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
-        >
-          로그인
-        </button>
-        {/* 구글 로그인 버튼 */}
+        <form onSubmit={signInWithEmail}>
+          <div className="mb-4">
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-gray-700"
+            >
+              이메일
+            </label>
+            <input
+              type="email"
+              id="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full p-2 border rounded"
+              aria-label="이메일 주소"
+              required
+            />
+          </div>
+          <div className="mb-4">
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium text-gray-700"
+            >
+              비밀번호
+            </label>
+            <input
+              type="password"
+              id="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              onKeyPress={(e) => e.key === "Enter" && signInWithEmail()}
+              className="w-full p-2 border rounded"
+              aria-label="비밀번호"
+              required
+            />
+          </div>
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 disabled:opacity-50"
+            aria-label="이메일로 로그인"
+          >
+            {isLoading ? "로그인 중..." : "로그인"}
+          </button>
+        </form>
         <button
           onClick={signInWithGoogle}
-          className="w-full bg-white text-gray-700 border border-gray-300 py-2 px-4 rounded hover:bg-gray-100 mt-4"
+          disabled={isLoading}
+          className="w-full bg-white text-gray-700 border border-gray-300 py-2 px-4 rounded hover:bg-gray-100 mt-4 disabled:opacity-50"
+          aria-label="구글로 로그인"
         >
-          구글로 로그인
+          {isLoading ? "처리 중..." : "구글로 로그인"}
         </button>
-        {/* 에러 메시지 */}
-        {errorMessage && <p className="mt-4 text-red-500">{errorMessage}</p>}
-
-        {/* 회원가입 링크 */}
+        {errorMessage && (
+          <p className="mt-4 text-red-500" role="alert">
+            {errorMessage}
+          </p>
+        )}
         <p className="mt-4">
           아직 계정이 없으신가요?{" "}
           <Link href="/signup" className="text-blue-500 hover:underline">

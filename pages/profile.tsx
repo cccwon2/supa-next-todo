@@ -1,6 +1,6 @@
 import { useSession } from "@supabase/auth-helpers-react";
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next/router";
 
 export default function Profile() {
   const session = useSession();

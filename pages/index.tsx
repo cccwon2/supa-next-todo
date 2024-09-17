@@ -1,6 +1,6 @@
 import Head from "next/head";
 import { useEffect } from "react";
-import { useRouter } from "next/navigation"; // App Router 방식 사용
+import { useRouter } from "next/router";
 import { useSession, useSupabaseClient } from "@supabase/auth-helpers-react";
 import TodoList from "@/components/TodoList";
 import Link from "next/link";
