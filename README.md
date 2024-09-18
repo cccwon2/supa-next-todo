@@ -117,9 +117,10 @@ create policy "Individuals can delete their own todos." on todos for
  */
 ```
 
-### Profile 페이지 추가
+### Profile 페이지
 
-사용자 프로필을 확인 및 업데이트할 수 있는 `Profile` 페이지를 추가했습니다. 사용자는 자신의 정보와 관련된 사항을 조회 및 수정할 수 있습니다.
+사용자 프로필을 확인 및 업데이트할 수 있는 `Profile` 페이지입니다.
+사용자는 자신의 정보와 관련된 사항을 조회 및 수정할 수 있습니다.
 
 ### 소셜 로그인
 
