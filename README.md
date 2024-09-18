@@ -1,4 +1,12 @@
-## Todo 예제 (Supabase 사용)
+<p align="center">
+  <img src="https://supa-next-todolist.vercel.app/supa_next_vercel.png" alt="Supa Next Todo 로고">
+</p>
+
+<p align="center">
+  <strong style="font-size: 24px;">Supa Next Todo</strong>
+</p>
+
+## Todo 예제
 
 - **프론트엔드**:
 
@@ -8,6 +16,7 @@
 
 - **백엔드**:
   - [supabase.com/dashboard](https://supabase.com/dashboard/): Supabase.js와 함께 사용되는 RESTful API가 제공되는 호스팅 Postgres 데이터베이스
+  - [Swagger API Docs](https://supa-next-todolist.vercel.app/api-docs): 백엔드쪽 Swagger API 문서
 
 ---
 
@@ -25,7 +34,7 @@ Vercel을 사용한 배포는 Supabase 계정 및 프로젝트를 생성하는 �
 
 [Supabase에 가입](https://supabase.com/dashboard)하고 새로운 프로젝트를 생성하세요. 데이터베이스가 시작될 때까지 기다립니다.
 
-### 2. "Todo List" Quickstart 실행
+### 2. "Todo List" Quick start 실행
 
 데이터베이스가 시작되면 "Todo List" 빠른 시작을 실행하세요. 프로젝트 내에서 `SQL Editor` 탭으로 이동하여 `TODO LIST: Build a basic todo list with Row Level Security`를 찾아 실행합니다.
 
@@ -108,14 +117,19 @@ create policy "Individuals can delete their own todos." on todos for
  */
 ```
 
-### Profile 페이지 추가
+### Profile 페이지
 
-사용자 프로필을 확인 및 업데이트할 수 있는 `Profile` 페이지를 추가했습니다. 사용자는 자신의 정보와 관련된 사항을 조회 및 수정할 수 있습니다.
+사용자 프로필을 확인 및 업데이트할 수 있는 `Profile` 페이지입니다.
+사용자는 자신의 정보와 관련된 사항을 조회 및 수정할 수 있습니다.
+
+### 소셜 로그인
+
+이 프로젝트는 다음과 같은 소셜 로그인 옵션을 제공합니다:
+
+- Google
+- GitHub
+- Kakao
+
+사용자는 이러한 소셜 계정을 통해 간편하게 로그인하고 서비스를 이용할 수 있습니다.
 
 ---
-
-## 저자
-
-- [Supabase](https://supabase.com)
-
-Supabase는 오픈 소스 프로젝트입니다. 자세한 정보는 [GitHub](https://github.com/supabase/supabase)에서 확인하고 참여할 수 있습니다.
