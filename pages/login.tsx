@@ -52,12 +52,12 @@ export default function Login() {
     }
   }
 
-  async function signInWithGoogle() {
+  async function signInWithOAuth(provider: "google" | "github") {
     setIsLoading(true);
     setErrorMessage("");
     try {
       const { error } = await supabase.auth.signInWithOAuth({
-        provider: "google",
+        provider: provider,
         options: {
           redirectTo: redirectUrl,
         },
@@ -65,9 +65,9 @@ export default function Login() {
 
       if (error) throw error;
     } catch (error) {
-      console.error("Google 로그인 오류:", error);
+      console.error(`${provider} 로그인 오류:`, error);
       setErrorMessage(
-        "Google 로그인 중 오류가 발생했습니다. 다시 시도해 주세요."
+        `${provider} 로그인 중 오류가 발생했습니다. 다시 시도해 주세요.`
       );
     } finally {
       setIsLoading(false);
@@ -144,12 +144,20 @@ export default function Login() {
           </button>
         </form>
         <button
-          onClick={signInWithGoogle}
+          onClick={() => signInWithOAuth("google")}
           disabled={isLoading}
           className="w-full bg-white text-gray-700 border border-gray-300 py-2 px-4 rounded hover:bg-gray-100 mt-4 disabled:opacity-50"
           aria-label="구글로 로그인"
         >
           {isLoading ? "처리 중..." : "구글로 로그인"}
+        </button>
+        <button
+          onClick={() => signInWithOAuth("github")}
+          disabled={isLoading}
+          className="w-full bg-gray-800 text-white border border-gray-300 py-2 px-4 rounded hover:bg-gray-700 mt-4 disabled:opacity-50"
+          aria-label="GitHub로 로그인"
+        >
+          {isLoading ? "처리 중..." : "GitHub로 로그인"}
         </button>
         {errorMessage && (
           <p className="mt-4 text-red-500" role="alert">
