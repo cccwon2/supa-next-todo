@@ -121,4 +121,14 @@ create policy "Individuals can delete their own todos." on todos for
 
 사용자 프로필을 확인 및 업데이트할 수 있는 `Profile` 페이지를 추가했습니다. 사용자는 자신의 정보와 관련된 사항을 조회 및 수정할 수 있습니다.
 
+### 소셜 로그인
+
+이 프로젝트는 다음과 같은 소셜 로그인 옵션을 제공합니다:
+
+- Google
+- GitHub
+- Kakao
+
+사용자는 이러한 소셜 계정을 통해 간편하게 로그인하고 서비스를 이용할 수 있습니다.
+
 ---
