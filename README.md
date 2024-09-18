@@ -1,4 +1,8 @@
-## Todo 예제 (Supabase 사용)
+![Supa Next Todo 로고](https://supa-next-todolist.vercel.app/supa_next_vercel.png)
+
+<p align="center">Supa Next Todo</p>
+
+## Todo 예제
 
 - **프론트엔드**:
 
