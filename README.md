@@ -2,7 +2,9 @@
   <img src="https://supa-next-todolist.vercel.app/supa_next_vercel.png" alt="Supa Next Todo 로고">
 </p>
 
-<p align="center">Supa Next Todo</p>
+<p align="center">
+  <strong style="font-size: 24px;">Supa Next Todo</strong>
+</p>
 
 ## Todo 예제
 
