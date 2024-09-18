@@ -15,10 +15,10 @@ export default async function handler(
   // Supabase 클라이언트 생성
   const supabase = createPagesServerClient({ req, res });
 
-  if (provider === "google") {
+  if (provider === "google" || provider === "github") {
     // Google 로그인 처리
     const { data, error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
+      provider: provider,
       options: {
         redirectTo: redirectUrl,
       },

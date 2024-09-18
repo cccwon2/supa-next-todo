@@ -8,6 +8,7 @@
 
 - **백엔드**:
   - [supabase.com/dashboard](https://supabase.com/dashboard/): Supabase.js와 함께 사용되는 RESTful API가 제공되는 호스팅 Postgres 데이터베이스
+  - [Swagger API Docs](https://supa-next-todolist.vercel.app/api-docs): 백엔드쪽 Swagger API 문서
 
 ---
 
