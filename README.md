@@ -26,7 +26,7 @@ Vercel을 사용한 배포는 Supabase 계정 및 프로젝트를 생성하는 �
 
 [Supabase에 가입](https://supabase.com/dashboard)하고 새로운 프로젝트를 생성하세요. 데이터베이스가 시작될 때까지 기다립니다.
 
-### 2. "Todo List" Quickstart 실행
+### 2. "Todo List" Quick start 실행
 
 데이터베이스가 시작되면 "Todo List" 빠른 시작을 실행하세요. 프로젝트 내에서 `SQL Editor` 탭으로 이동하여 `TODO LIST: Build a basic todo list with Row Level Security`를 찾아 실행합니다.
 
