@@ -52,7 +52,7 @@ export default function Login() {
     }
   }
 
-  async function signInWithOAuth(provider: "google" | "github") {
+  async function signInWithOAuth(provider: "google" | "github" | "kakao") {
     setIsLoading(true);
     setErrorMessage("");
     try {
@@ -190,6 +190,24 @@ export default function Login() {
             />
           </svg>
           <span>{isLoading ? "처리 중..." : "GitHub로 로그인"}</span>
+        </button>
+        <button
+          onClick={() => signInWithOAuth("kakao")}
+          disabled={isLoading}
+          className="w-full bg-yellow-300 text-gray-800 border border-gray-300 py-2 px-4 rounded hover:bg-yellow-400 mt-4 disabled:opacity-50 flex items-center justify-center"
+          aria-label="카카오로 로그인"
+        >
+          <svg
+            className="w-5 h-5 mr-2"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M12 3C6.477 3 2 6.477 2 12c0 5.523 4.477 10 10 10s10-4.477 10-10c0-5.523-4.477-10-10-10zM12 4.75c4.136 0 7.5 3.364 7.5 7.5 0 4.136-3.364 7.5-7.5 7.5-4.136 0-7.5-3.364-7.5-7.5 0-4.136 3.364-7.5 7.5-7.5zm-1.534 3.384v4.716l-2.889-1.479.005 2.025 2.884 1.479 2.884-1.479.005-2.025-2.889 1.479V8.134h-2z"
+              fill="currentColor"
+            />
+          </svg>
+          <span>{isLoading ? "처리 중..." : "카카오로 로그인"}</span>
         </button>
         {errorMessage && (
           <p className="mt-4 text-red-500" role="alert">
