@@ -1,4 +1,6 @@
-![Supa Next Todo 로고](https://supa-next-todolist.vercel.app/supa_next_vercel.png)
+<p align="center">
+  <img src="https://supa-next-todolist.vercel.app/supa_next_vercel.png" alt="Supa Next Todo 로고">
+</p>
 
 <p align="center">Supa Next Todo</p>
 
